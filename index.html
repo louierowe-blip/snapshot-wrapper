@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Live Snapshot</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Try to prevent caching of the wrapper page itself -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <style>
+    html, body { height:100%; margin:0; background:#fff; }
+    body { display:grid; place-items:center; }
+    img { max-width:100%; max-height:100vh; height:auto; display:block; }
+  </style>
+</head>
+<body>
+  <img id="shot" alt="Latest snapshot" />
+  <script>
+    // 1) Base URL to the actual image file (OneDrive raw link, proxy URL, or any public PNG/JPG)
+    //    If you use OneDrive/SharePoint, "download=1" usually returns raw bytes.
+    const BASE = "https://nordelluk-my.sharepoint.com/personal/louie_rowe_nordell_co_uk/Documents/IQMS%20Image/IQMS.png?download=1";
+
+    // 2) Optional controls via query string: ?interval=300 (seconds), ?bg=ffffff
+    const qs = new URLSearchParams(location.search);
+    const intervalSec = Math.max(30, parseInt(qs.get("interval") || "300")); // min 30s
+    const bg = qs.get("bg"); if (bg) document.body.style.background = `#${bg}`;
+
+    function load() {
+      const u = new URL(BASE);
+      u.searchParams.set("t", Date.now().toString()); // cache buster
+      document.getElementById("shot").src = u.toString();
+    }
+    load();
+    setInterval(load, intervalSec * 1000);
+  </script>
+</body>
+</html>
